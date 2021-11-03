@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 #
 # usage: ./main.py "input"
 # 
@@ -69,17 +69,17 @@ def tv():
 # keywords act as regular expressions
 command_switch = {
 # 'keyword' : function,
-    '^s[0-9]?[0-9]?[0-9]?$' : socket,
-    'tel[e]?([k]{2}|vis){1}' : tv,
-    'kah[a]?vi' : coffee,
-    'katto' : ceiling_light,
-    'kasvi' : shelf_light,
-    'kaikki': sockets,
-    'valot' : sockets,
-    'lamput': sockets,
-    'valo'  : socket,
-    'lamppu': socket,
-    'tv'    : tv,
+    'katto'         : ceiling_light,
+    'kasvi'         : shelf_light,
+    'kaha?vi'       : coffee,
+    'kaikki'        : sockets,
+    'valot'         : sockets,
+    'lamput'        : sockets,
+    '^s[0-9]{0,3}$' : socket,
+    'valo'          : socket,
+    'lamppu'        : socket,
+    'tele?[kk|vis]' : tv,
+    'tv'            : tv,
 }
 
 # contains regular expressions for numbers 0 to 9. 
@@ -115,7 +115,7 @@ def check_match(word, lst, empty, mod = 0):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="Launches commands if input string contains specific keywords")
-    parser.add_argument('input', metavar='input', type=ascii, 
+    parser.add_argument('input', metavar='input', type=str, 
                             nargs=1, help='input string')
     args = parser.parse_args()
 
