@@ -6,9 +6,9 @@
 # if input has a recognized command and enough parameters it will lauch a shell script
 # see command_switch for more details
 #
-# suikale 021121
+# suikale 031121
 
-import sys
+import argparse
 import os
 import re
 nums = []
@@ -52,7 +52,6 @@ def coffee():
     set_socket(2, 0)
 
 # turn off tv display panel led
-# TODO: add ssh keys to host
 def tv():
     if len(nums) > 0:
         state = nums.pop()
@@ -114,18 +113,20 @@ def check_match(word, lst, empty, mod = 0):
     return empty
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        # no input
-        exit()
+    parser = argparse.ArgumentParser(
+        description="Launches commands if input string contains specific keywords")
+    parser.add_argument('input', metavar='input', type=ascii, 
+                            nargs=1, help='input string')
+    args = parser.parse_args()
 
     # php calls for ./main.py "input"
-    # so only argv[1] matters    
+    # so only first string matters    
     # input sanitization must be done by php
-    input = sys.argv[1]
+    input = args.input[0].replace('\'', '')
     input_words = input.split()
 
     # adds support for controlling sockets with s[command][id][group], eq. "s100" or "s1"
-    if len(input_words) == 1 and input_words[0].startswith('s'):
+    if len(input_words) == 1:
         if re.match("(?i)^s[0-9]?[0-9]?[0-9]?$", input_words[0]):
             input_words = input_words[0]
 
