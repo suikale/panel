@@ -27,8 +27,7 @@ def socket():
         if len(nums) > 0:
             group = nums.pop()
             cli_cmd = cli_cmd + str(group)        
-        print(cli_cmd)
-        #os.system(cli_cmd)
+        os.system(cli_cmd)
 def sockets():
     if len(nums) > 0:
         state = nums.pop()
@@ -62,8 +61,7 @@ def tv():
         if state == 1 or state == 3:
             io = "On"
         cli_cmd = "ssh tv luna-send -n 1 luna://com.webos.service.tvpower/power/turn" + io + "Screen '{}'"
-        print(cli_cmd)
-        #os.system(cli_cmd)
+        os.system(cli_cmd)
 
 # executes a function based on input
 # keywords act as regular expressions
