@@ -120,7 +120,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # php calls for ./main.py "input"
-    # so only first string matters    
+    # so only the first string matters    
     # input sanitization must be done by php
     input = args.input[0].replace('\'', '')
     input_words = input.split()
