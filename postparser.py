@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# usage: ./postparser.py "input"
+# usage: ./main.py "input"
 # 
 # if input has a recognized command and enough parameters it will lauch a shell script
 # see command_switch for more details
@@ -11,13 +11,13 @@
 import sys
 import os
 import re
-import math
-
-spi_send = "/usr/local/bin/spi_send " 
 nums = []
 
-# control wireless plugs, see spi_send for more info
-def socket ():
+### user defined functions
+spi_send = "/usr/local/bin/spi_send "
+
+# control wireless plugs, see spi_send for details
+def socket():
     if len(nums) > 0:
         state = nums.pop()
         cli_cmd = spi_send + str(state)
@@ -27,57 +27,73 @@ def socket ():
         if len(nums) > 0:
             group = nums.pop()
             cli_cmd = cli_cmd + str(group)        
-        os.system(cli_cmd)
+        print(cli_cmd)
+        #os.system(cli_cmd)
 def sockets():
     if len(nums) > 0:
         state = nums.pop()
-        state = state + 2
-        cli_cmd = spi_send + str(state)
-        os.system(cli_cmd)
+        state = int(state) + 2
+        if 2 <= state and state <= 3:
+            nums.insert(3, state)
+            socket()
+def set_socket(id, group):
+    if len(nums) > 0:
+        state = nums.pop()
+        if 0 <= state and state <= 1:
+            nums.insert(0, group)
+            nums.insert(1, id)
+            nums.insert(2, state)
+            socket()
 def ceiling_light():
-    nums.insert(0, 0)
-    socket()
+    set_socket(0, 0)
 def shelf_light():
-    nums.insert(0, 1)
-    socket()
+    set_socket(1, 0)
+def coffee():
+    set_socket(2, 0)
 
 # turn off tv display panel led
+# TODO: add ssh keys to host
 def tv():
     if len(nums) > 0:
         state = nums.pop()
-        if state == 0:
+        if state < 0 or 3 < state:
+            return
+        if state == 0 or state == 2:
             io = "Off"
-        if state == 1:
+        if state == 1 or state == 3:
             io = "On"
         cli_cmd = "ssh tv luna-send -n 1 luna://com.webos.service.tvpower/power/turn" + io + "Screen '{}'"
-        os.system(cli_cmd)
+        print(cli_cmd)
+        #os.system(cli_cmd)
 
 # executes a function based on input
 # keywords act as regular expressions
 command_switch = {
 # 'keyword' : function,
+    '^s[0-9]?[0-9]?[0-9]?$' : socket,
+    'tel[e]?([k]{2}|vis){1}' : tv,
+    'kah[a]?vi' : coffee,
     'katto' : ceiling_light,
     'kasvi' : shelf_light,
     'kaikki': sockets,
-    'lamput': sockets,
     'valot' : sockets,
-    '^s$'     : socket,
+    'lamput': sockets,
     'valo'  : socket,
     'lamppu': socket,
     'tv'    : tv,
-    'tele'  : tv,
 }
 
 # contains regular expressions for numbers 0 to 9. 
 # change num_count if the comments are moved
 # may break if (len(numlist) % num_count) != 0 
-num_count = 4                                  
+num_count = 4                                   # expendable to reassonable limits as long as all fields have a unique value
 num_list = [ '0',     '1',    '2',    '3',      # '4',      '5',    '6',    '7',      '8',     '9', 
              'noll',  'yks',  'kaks', 'kolm',   # 'nelj',   'viis', 'kuus', 'seitse', 'kahde', 'yhdek',
              'yhtää', 'eka',  'toka', 'kolom',  # 'nelij',  'viie', 'kuue', 'seisk',  'kasi',  'ysi',
              'nada',  'ykkö', 'toin', 'kolkku'] # 'nelkku', 'vito', 'kuto', 'seitte', 'kahek', 'yheks', ] 
 
 # contains words for states off/on
+state_count = 2
 state_list = [ 'kiinni', 'päälle', 
                'pois',   'auki', 
                'off',    'on' ]
@@ -88,10 +104,9 @@ word_list = list(command_switch.keys())
 # checks if word matches a regular expression from a given list
 # if mod > 0 returns int(index of the keyword % mod)
 # else returns the keyword as string
-def check_match(word, lst, empty, mod):
+def check_match(word, lst, empty, mod = 0):
     for i in lst:
-        r = re.compile('(?i)' + i)
-        if r.match(word):
+        if re.compile('(?i)' + i).match(word):
             if (mod > 0):
                 return lst.index(i) % mod
             else: 
@@ -105,7 +120,7 @@ if __name__ == '__main__':
 
     # php calls for ./main.py "input"
     # so only argv[1] matters    
-    # input sanitization must be handled by php
+    # input sanitization must be done by php
     input = sys.argv[1]
     input_words = input.split()
 
@@ -115,11 +130,11 @@ if __name__ == '__main__':
             input_words = input_words[0]
 
     # parses the input
-    # command -> cmd, numeric values and states -> nums
-    hax = True
+    # command -> cmd, numeric values -> nums, state -> state
     cmd = ""
+    state = ""
     for iw in input_words:
-        c = check_match(iw, word_list, "", -1)
+        c = check_match(iw, word_list, "")
         if (len(c) > 0):
             cmd = c
             continue
@@ -129,14 +144,13 @@ if __name__ == '__main__':
             nums.append(num)
             continue
         
-        state = check_match(iw, state_list, -1, 2)
-        if (state >= 0):
-            hax = False # fix for finnish grammar, "toinen valo päälle" etc
-            nums.append(state)
+        st = check_match(iw, state_list, -1, state_count)
+        if (st >= 0):
+            state = st
             continue
     
-    if hax: 
-        nums.reverse() # fixes pop()
     if len(cmd) > 0:
-        cmd = command_switch.get(cmd)
-        cmd()
+        nums.reverse() # fixes pop()
+        if len(str(state)) > 0:
+            nums.append(state)
+        command_switch.get(cmd)()

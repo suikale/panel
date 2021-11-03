@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>henlo dave</title>
+	<meta charset="utf-8">
+    <title>apumaatti</title>
     <style>
 	body { background-color: #212121;
 	}
@@ -32,19 +32,19 @@
     <script type = "text/javascript">
         $(document).ready(function() {
             $('#button').click(function(e) {
-	        e.preventDefault();
-                var text = $('#text').val();
-                var dataString = {'input' : text };
-	        $.ajax({         
-	            type: 'POST',
-                    url: 'run.php',
-		    data: dataString
-	        });
+	        	e.preventDefault();
+				var text = $('#text').val();
+				var dataString = {'input' : text };
+	        	$.ajax({         
+	            	type: 'POST',
+					url: 'run.php',
+		    		data: dataString
+	        	});
     	    });
         });
     </script>
 
-    <form method="post">
+    <form method="post" autocomplete="off" >
         <input type="text" name="text" id="text" />
 	<br>
         <input type="submit" id="button" value="halo halo kuntelen" />
