@@ -1,54 +1,58 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="utf-8">
-    <title>apumaatti</title>
-    <style>
-	body { background-color: #212121;
-	}
-	input[type=text] {
-		color: #ffffff;
-		background-color: #424242;
-		padding: 3%;
-		margin-top: 1%;
-		margin-left: 3%;
-		width: 94%;
-		box-sizing: border-box;
-	}
-	input[type=submit] {
-		color: #ffffff;
-		background-color: #303030;
-		padding: 2%;
-		margin-top: 1%;
-		margin-left: 3%;
-		width: 94%;
-		box-sizing: border-box;
-	};
-    </style>
-</head>
+	<head>
+		<meta charset="utf-8">
+		<title>apumaatti</title>
+		<style>
+			body { background-color: #212121;
+			}
+			input[type=text] {
+				font-size: 300%;
+				color: #ffffff;
+				background-color: #424242;
+				padding-left: 3%;
+				padding-right: 3%;
+				margin-top: 1%;
+				margin-left: 3%;
+				width: 94%;
+				box-sizing: border-box;
+			}
+			input[type=submit] {
+				align-content: center;
+				font-size: 200%;
+				color: #ffffff;
+				background-color: #303030;
+				padding: 1%;
+				margin-top: 1%;
+				margin-left: 3%;
+				width: 94%;
+				box-sizing: border-box;
+			};
+		</style>
+	</head>
 
-<body class="body" id="content">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>		
-    <script type = "text/javascript">
-        $(document).ready(function() {
-            $('#button').click(function(e) {
-	        	e.preventDefault();
-				var text = $('#text').val();
-				var dataString = {'input' : text };
-	        	$.ajax({         
-	            	type: 'POST',
-					url: 'run.php',
-		    		data: dataString
-	        	});
-    	    });
-        });
-    </script>
+	<body class="body" id="content">
+		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>		
+		<script type = "text/javascript">
+			$(document).ready(function() {
+				$('#button').click(function(e) {
+					e.preventDefault();
+					var text = $('#text').val();
+					var dataString = {'input' : text };
+					$.ajax({         
+						type: 'POST',
+						url: 'run.php',
+						data: dataString
+					});
+				});
+			});
+		</script>
 
-    <form method="post" autocomplete="off" >
-        <input type="text" name="text" id="text" />
-	<br>
-        <input type="submit" id="button" value="halo halo kuntelen" />
-    </form>
-    <img style="position:absolute; bottom:0%; left:0%;" width="100%"; height="75%"; src="koti_apumaatti.png"> 
-</body>
+		<form method="post" autocomplete="off" >
+			<input type="text" name="text" id="text" />
+			<br>
+			<input type="submit" id="button" value="halo halo kuntelen" />
+		</form>
+		<img style="position:absolute; bottom:0%; left:0%;" width="100%"; height="75%"; src="koti_apumaatti.png"> 
+	</body>
 </html>
