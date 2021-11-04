@@ -6,7 +6,7 @@
 # if input has a recognized command and enough parameters it will lauch a shell script
 # see command_switch for more details
 #
-# suikale 031121
+# suikale 041121
 
 import argparse
 import os
@@ -15,6 +15,7 @@ nums = []
 
 ### user defined functions
 spi_send = "/usr/local/bin/spi_send "
+tvio     = "/usr/local/bin/tvio "
 
 # control wireless plugs, see spi_send for details
 def socket():
@@ -54,14 +55,12 @@ def coffee():
 def tv():
     if len(nums) > 0:
         state = nums.pop()
-        if state < 0 or 3 < state:
-            return
-        if state == 0 or state == 2:
-            io = "Off"
-        if state == 1 or state == 3:
-            io = "On"
-        cli_cmd = "ssh tv luna-send -n 1 luna://com.webos.service.tvpower/power/turn" + io + "Screen '{}'"
-        os.system(cli_cmd)
+        if 0 < state or state < 3:
+            os.system(tvio + str(state))
+def tvpanel():
+	state = num.pop()
+	nums.append(int(state) + 2)
+	tv()
 
 # executes a function based on input
 # keywords act as regular expressions
@@ -78,6 +77,8 @@ command_switch = {
     'lamppu'        : socket,
     'tele?[kk|vis]' : tv,
     'tv'            : tv,
+	'ruutu'         : tvpanel,
+    'kuva'          : tvpanel,
 }
 
 # contains regular expressions for numbers 0 to 9. 
